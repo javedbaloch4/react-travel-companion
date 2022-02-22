@@ -2,13 +2,14 @@ import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { Paper, Typography, useMediaQuery } from '@material-ui/core'
 import LocationOutlinedIcon from '@material-ui/icons/LocationOnOutlined'
-import Rating from '@material-ui/lab'
+import Rating from '@material-ui/lab/Rating'
 
 import useStyles from './styles'
+import LocationOnOutlined from '@material-ui/icons/LocationOnOutlined'
 
-const Map = ({setCoordinates, setBounds, coordinates}) => {
+const Map = ({setCoordinates, setBounds, coordinates, places}) => {
     const classes = useStyles()
-    const isMobile = useMediaQuery('(min-width: 600px)')
+    const isDesktop = useMediaQuery('(min-width: 600px)')
 
     return (
         <div className={classes.mapContainer}>
@@ -27,7 +28,31 @@ const Map = ({setCoordinates, setBounds, coordinates}) => {
 
                 }}
             >
-
+                {places?.map((place, i) => {
+                    <div 
+                        className={classes.markerContainer}
+                        lat={Number(place.latitude)}
+                        lng={Number(place.longitude)}
+                        key={i}
+                        >
+                            { !isDesktop ? (
+                                <LocationOutlinedIcon color="primary" fontSize="large" />
+                            ): (
+                                <Paper elevation={3} className={classes.paper}>
+                                    <Typography className={classes.typography} variant="subtitle2" gutterBttom>
+                                        {place.name}
+                                    </Typography>
+                                    <img 
+                                        className={classes.pointer}
+                                        src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
+                                        alt={place.name}
+                                   />
+                                   <Rating size="small" value={Number(place.rating)} readOnly />
+                                </Paper>
+                            )}
+                            
+                    </div>
+                })}
             </GoogleMapReact>
         </div>
     )
